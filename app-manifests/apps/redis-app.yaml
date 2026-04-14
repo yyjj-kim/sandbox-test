@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-app
+  namespace: argocd
+spec:
+  project: sandbox-test
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: redis
+      targetRevision: 20.1.0
+      helm:
+        valueFiles:
+          - $values/redis/values.yaml
+    - repoURL: 'https://github.com/yyjj-kim/sandbox-test.git'
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: infra-redis  # 실제 앱이 설치될 네임스페이스
+  syncPolicy:
+    automated:
+      prune: true
